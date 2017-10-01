@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"></meta>
+  <title>Caster Wheel Demo</title>
+  <script 
+    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.2/TweenMax.min.js">
+  </script>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="js/index.js"></script>
+  <style>
+    @namespace svg url(http://www.w3.org/2000/svg);
+    @namespace html5 url(http://www.w3.org/1999/xhtml);
+
+    /* Hard Reset.
+       *Should* be applied to everything. 
+       But chrome and opera will happily unset SVG elements (non-style)
+       attributes (radius, width, etc.)
+       which is wrong AFAICT. 
+       Even worse, they won't let inline values override this default.
+     */
+    html5|* { 
+      all: unset; 
+    }
+
+    head {
+      display: none;
+    }
+    div {
+      display: block;
+    }
+    * {
+      box-sizing: inherit;
+    }
+    html {
+      box-sizing: border-box;
+    }
+
+    svg {
+      display: block;
+    }
+    svg * {
+      transform-origin: 0px 0px 0px;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="app">
+  </div>
+</body>
+</html>
