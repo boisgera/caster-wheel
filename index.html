@@ -3,14 +3,12 @@
 <head>
   <meta charset="utf-8"></meta>
   <title>Caster Wheel Demo</title>
-  <script 
-    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.2/TweenMax.min.js">
-  </script>
+  <script src="https://use.fontawesome.com/9ad4d58b37.js"></script>
   <script src="https://unpkg.com/vue"></script>
   <script src="js/index.js"></script>
   <style>
     @namespace svg url(http://www.w3.org/2000/svg);
-    @namespace html5 url(http://www.w3.org/1999/xhtml);
+    @namespace html url(http://www.w3.org/1999/xhtml);
 
     /* Hard Reset.
        *Should* be applied to everything. 
@@ -19,7 +17,7 @@
        which is wrong AFAICT. 
        Even worse, they won't let inline values override this default.
      */
-    html5|* { 
+    html|* { 
       all: unset; 
     }
 

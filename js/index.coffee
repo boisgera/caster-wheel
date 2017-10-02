@@ -17,9 +17,41 @@ Vue.component "v-page",
       height: "100vh"
   template: """
     <div :style="style">
-        <slot></slot>
+      <slot></slot>
     </div>
     """
+
+Vue.component "v-button",
+  props: ["name"]
+  data: ->
+    style:
+      display: "inline-block"
+      padding: "0.5em"
+      pointerEvents: "auto"
+      backgroundColor: "rgba(0,0,0,0)"
+      cursor: "default"
+    highlight: false
+    counter: 0
+
+  template: """
+    <div 
+      :style="style"
+      @click="click"
+      @mouseenter="highlight = true"
+      @mouseleave="highlight = false">
+      <i :class="classes"></i>
+    </div>
+    """
+  watch:
+    highlight: (status) ->
+      this.style.cursor = if status then "pointer" else "default"
+
+  computed:
+    classes: -> ["fa", "fa-" + this.name]
+
+  methods:
+    click: (event) ->
+      this.$emit("v-click", event)
 
 Vue.component "v-svg",
   props: 
@@ -39,20 +71,45 @@ Vue.component "v-svg",
       x: 0
       y: 0
     aim: [0,0]
-
+    overlay:
+      style:
+        position: "absolute"
+        top: "0"
+        left: "0"
+        width: "100%"
+        height: "100%"
+        pointerEvents: "none"
+    dock:
+      style:
+        position: "absolute"
+        top: "0"
+        left: "0"
+        width: "100%"
+        height: "auto"
+        fontSize: "5vmin"
+        
   template: """
-    <svg 
-      :viewBox="flippedViewBox" 
-      preserveAspectRatio="xMidYMid meet"
-      shape-rendering="optimizePrecision"
-      transform="scale(1,-1)"
-      :style="style"
-      @mousedown="startDrag"
-      @mousemove="onDrag"
-      @mouseup="stopDrag"
-      ref="svg">
-      <slot></slot>
-     </svg>
+    <div style="position: relative">
+      <svg 
+        :viewBox="flippedViewBox" 
+        preserveAspectRatio="xMidYMid meet"
+        shape-rendering="optimizePrecision"
+        :style="style"
+        @mousedown="startDrag"
+        @mousemove="onDrag"
+        @mouseup="stopDrag"
+        ref="svg">
+          <g transform="scale(1,-1)">
+            <slot> 
+            </slot>
+          </g>
+       </svg>
+       <div class="overlay" :style="overlay.style">
+         <div class="dock" :style="dock.style">
+           <v-button name="camera-retro" @v-click="snapshot"></v-button>
+         </div>
+       </div>
+     </div>
      """
   methods:
     onResize: ->
@@ -84,6 +141,23 @@ Vue.component "v-svg",
       #this.style.cursor = "grab"
       this.drag.active = false
 
+    snapshot: ->
+      console.log "snapshot"
+      anchor = document.createElement "a"
+      # need to duplicate the SVG and to tweak some shit (e.g. size)
+      svg = this.$refs.svg.cloneNode(true) # deep cloning
+      svg.setAttribute "width", "1600px"
+      svg.setAttribute "height", "900px"
+      svg.style.width = undefined
+      svg.style.height = undefined
+      anchor.setAttribute "href", 
+        "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg.outerHTML)
+      anchor.setAttribute "download", "figure.svg"
+
+      event = document.createEvent "MouseEvents"
+      event.initEvent "click", true, true
+      anchor.dispatchEvent event
+
   computed:
     flippedViewBox: ->
       vb = this.viewBox[...]
@@ -103,6 +177,7 @@ Vue.component "v-svg",
         ymin = ymin - (newHeight - height) / 2
         height = newHeight 
       return [xmin, ymin, width, height] 
+
 
   mounted: ->
     this.onResize()
